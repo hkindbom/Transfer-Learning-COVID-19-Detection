@@ -1,7 +1,7 @@
 # DD2424 Deep Learning Group Project
 
 
-###Team
+### Team
 - Hannes Kindbom
 - Johanna Dyremark
 - Ershad Taherifard
