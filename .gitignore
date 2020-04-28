@@ -1,2 +1,6 @@
 .ipynb_checkpoints
 .idea/
+data/covid-chestxray-dataset
+data/Figure1-COVID-chestxray-dataset
+data/dataset/train
+data/dataset/test
