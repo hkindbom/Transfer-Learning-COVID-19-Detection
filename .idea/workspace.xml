@@ -5,8 +5,6 @@
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Notebook.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Notebook.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/dataset/playground_dataset/0a6a5956-58cf-4f17-9e39-7e0d17310f67.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/dataset/playground_dataset/0a8d486f-1aa6-4fcf-b7be-4bf04fc8628b.png" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,6 +28,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
