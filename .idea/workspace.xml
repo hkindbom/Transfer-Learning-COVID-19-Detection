@@ -2,50 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34394c87-2db0-46f0-a5c6-e2d572078eb9" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/CNN/CNN1.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CNN/CNN2.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CNN/CNN3.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CNN/beginner.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CNN/cnn.h5" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/test/IMG_0060.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/test/IMG_0129.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/test/IMG_0311.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/test/IMG_9254.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/test/IMG_9521.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/test/hund9.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/test/pizza3.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/train/class1/IMG_0134.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/train/class1/IMG_0246.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/train/class1/IMG_0247.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/train/class1/IMG_0248.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/train/class1/IMG_0249.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/train/class1/IMG_0324.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/train/class1/IMG_9549.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/train/class1/IMG_9551.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/train/class1/IMG_9552.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/train/class2/IMG_0123.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/train/class2/IMG_9508.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/train/class2/IMG_9509.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/train/class2/IMG_9511.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/train/class2/IMG_9521.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/train/class2/pizza1.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/train/class3/hund1.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/train/class3/hund2.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/train/class3/hund3.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/train/class3/hund4.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/train/class3/hund5.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/val/class1/IMG_0070.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/val/class1/IMG_0124.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/val/class1/IMG_0129.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/val/class1/IMG_0246.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/val/class2/IMG_9509.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/val/class2/IMG_9510.JPG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/val/class2/pizza2.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/val/class3/hund6.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/dataset/johanna_testdata/val/class3/hund7.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CNN/data.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Notebook.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Notebook.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
