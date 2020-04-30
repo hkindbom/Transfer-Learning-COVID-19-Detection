@@ -4,4 +4,6 @@ data/covid-chestxray-dataset
 data/Figure1-COVID-chestxray-dataset
 data/dataset/train
 data/dataset/test
+data/dataset/excess_test
+data/dataset/excess_train
 __pycache__/
