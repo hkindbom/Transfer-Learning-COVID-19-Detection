@@ -47,7 +47,7 @@ model.fit(
 )
 
 # Save the model to disk.
-model.save_weights('cnn.h5')
+#model.save_weights('cnn.h5')
 
 # Load the model from disk later using:
 # model.load_weights('cnn.h5')
