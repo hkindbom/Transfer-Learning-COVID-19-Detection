@@ -115,5 +115,5 @@ if __name__ == "__main__":
     print("Model trained")
 
     # evaluate model
-    result = model.evaluate_generator(test_generator)
+    result = trained_model.evaluate_generator(test_generator)
     print("Model evaluated")
