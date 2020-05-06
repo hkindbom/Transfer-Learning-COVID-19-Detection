@@ -112,7 +112,7 @@ if __name__ == "__main__":
 
     # Train model
     trained_model = train_model(model, train_generator, val_generator)
-    print("Model fine-tuned")
+    print("Model trained")
 
     # evaluate model
     result = model.evaluate_generator(test_generator)
