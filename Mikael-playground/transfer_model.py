@@ -1,22 +1,36 @@
 from keras.applications.vgg16 import VGG16
 from keras.preprocessing.image import ImageDataGenerator
+from sklearn.utils import class_weight
 from keras import Model, layers
 from keras.callbacks import ReduceLROnPlateau
 from matplotlib import pyplot as plt
+import numpy as np
 
 # folders
-train_dir = 'data/dataset/train1/'
-val_dir = 'data/dataset/val1/'
-test_dir = 'data/dataset/test1/'
+train_dir = './../data/dataset/smallDataset/train/'
+val_dir = './../data/dataset/smallDataset/val/'
+test_dir = './../data/dataset/smallDataset/test/'
 
 # constants
-IMG_SIZE = 224  # double check in report
-LEARNING_RATE = 2e-5
-EPOCHS = 3  # in report 22
-BATCH_SIZE = 1
-FACTOR = 0.7
-PATIENCE = 5
-OPTIMIZER = 'Adam'
+train_local = True
+train_real = False
+if train_real:
+    IMG_SIZE = 224  # double check in report
+    LEARNING_RATE = 2e-5
+    EPOCHS = 22  # in report 22
+    BATCH_SIZE = 8
+    FACTOR = 0.7
+    PATIENCE = 5
+    OPTIMIZER = 'Adam'
+
+if train_local:
+    IMG_SIZE = 224  # double check in report
+    LEARNING_RATE = 2e-5
+    EPOCHS = 3  # in report 22
+    BATCH_SIZE = 8
+    FACTOR = 0.7
+    PATIENCE = 5
+    OPTIMIZER = 'Adam'
 
 
 def create_generators():
@@ -89,6 +103,12 @@ def freeze_layers(model, unfrozen_layers):
 def train_model(model, train_generator, val_generator):
     nb_train_samples = train_generator.n
     nb_val_samples = val_generator.n
+    # The weights can be altered to pay more attention to recall/precision/accuracy. Balanced will yield better recall.
+    class_weights = class_weight.compute_class_weight(
+           'balanced',
+            np.unique(train_generator.classes),
+            train_generator.classes
+    )
 
     trained_model = model.fit_generator(
         train_generator,
@@ -97,6 +117,7 @@ def train_model(model, train_generator, val_generator):
         validation_data=val_generator,
         validation_steps=nb_val_samples // BATCH_SIZE,
         verbose=0,
+        class_weight=class_weights,
         callbacks=[ReduceLROnPlateau(
             monitor='loss',
             factor=FACTOR,
@@ -140,6 +161,9 @@ if __name__ == "__main__":
     # evaluate model
     result = model.evaluate_generator(test_generator)
     print("Model evaluated")
+
+    # Print statistics
+    print(model_statistics.history)
 
     # Plot statistics
     plot(model_statistics.history)
