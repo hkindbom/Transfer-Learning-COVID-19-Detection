@@ -18,7 +18,7 @@ test_dir = './../data/dataset/smallDataset/test/'
 train_local = True
 train_real = False
 
-Confusion_matrix = True
+show_confusion_matrix = True
 plot_statistics = True
 
 # Constants
@@ -181,7 +181,7 @@ if __name__ == "__main__":
     print("Model trained")
 
     # Get predicted values and plot confusion matrix
-    if confusion_matrix:
+    if show_confusion_matrix:
         Y_pred = model.predict_generator(val_generator)
         Y_pred = np.argmax(Y_pred, 1)
         Y_true = val_generator.classes
