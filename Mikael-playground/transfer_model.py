@@ -4,16 +4,24 @@ from sklearn.utils import class_weight
 from keras import Model, layers
 from keras.callbacks import ReduceLROnPlateau
 from matplotlib import pyplot as plt
+from sklearn.metrics import confusion_matrix
 import numpy as np
+import seaborn as sn
+import pandas as pd
 
 # folders
 train_dir = './../data/dataset/smallDataset/train/'
 val_dir = './../data/dataset/smallDataset/val/'
 test_dir = './../data/dataset/smallDataset/test/'
 
-# constants
+# Settings
 train_local = True
 train_real = False
+
+Confusion_matrix = True
+plot_statistics = True
+
+# Constants
 if train_real:
     IMG_SIZE = 224  # double check in report
     LEARNING_RATE = 2e-5
@@ -26,7 +34,7 @@ if train_real:
 if train_local:
     IMG_SIZE = 224  # double check in report
     LEARNING_RATE = 2e-5
-    EPOCHS = 3  # in report 22
+    EPOCHS = 10  # in report 22
     BATCH_SIZE = 8
     FACTOR = 0.7
     PATIENCE = 5
@@ -58,14 +66,16 @@ def create_generators():
         val_dir,
         target_size=(IMG_SIZE, IMG_SIZE),
         batch_size=BATCH_SIZE,
-        class_mode='categorical'
+        class_mode='categorical',
+        shuffle=False
     )
 
     test_generator = datagen.flow_from_directory(
         test_dir,
         target_size=(IMG_SIZE, IMG_SIZE),
         batch_size=BATCH_SIZE,
-        class_mode='categorical'
+        class_mode='categorical',
+        shuffle=False
     )
 
     return train_generator, val_generator, test_generator
@@ -105,9 +115,9 @@ def train_model(model, train_generator, val_generator):
     nb_val_samples = val_generator.n
     # The weights can be altered to pay more attention to recall/precision/accuracy. Balanced will yield better recall.
     class_weights = class_weight.compute_class_weight(
-           'balanced',
-            np.unique(train_generator.classes),
-            train_generator.classes
+        'balanced',
+        np.unique(train_generator.classes),
+        train_generator.classes
     )
 
     trained_model = model.fit_generator(
@@ -127,7 +137,8 @@ def train_model(model, train_generator, val_generator):
 
     return trained_model
 
-def plot(statistics):
+
+def plot_loss_accuracy(statistics):
     # summarize history for accuracy
     plt.plot(statistics['accuracy'])
     plt.plot(statistics['val_accuracy'])
@@ -146,6 +157,17 @@ def plot(statistics):
     plt.legend(['train', 'Val'], loc='upper left')
     plt.show()
 
+
+def plot_confusion_matrix(Y_pred, Y_true):
+    conf_matrix = confusion_matrix(Y_true, Y_pred)
+    df_cm = pd.DataFrame(conf_matrix, columns=np.unique(Y_true), index=np.unique(Y_true))
+    df_cm.index.name = 'Actual'
+    df_cm.columns.name = 'Predicted'
+    plt.figure(figsize=(3, 3))
+    sn.heatmap(df_cm, cmap="Blues", annot=True, annot_kws={"size": 16})
+    plt.show()
+
+
 if __name__ == "__main__":
     # Get generators
     train_generator, val_generator, test_generator = create_generators()
@@ -158,17 +180,20 @@ if __name__ == "__main__":
     model_statistics = train_model(model, train_generator, val_generator)
     print("Model trained")
 
-    # evaluate model
-    result = model.evaluate_generator(test_generator)
-    print("Model evaluated")
-
-    # Print statistics
-    print(model_statistics.history)
+    # Get predicted values and plot confusion matrix
+    if confusion_matrix:
+        Y_pred = model.predict_generator(val_generator)
+        Y_pred = np.argmax(Y_pred, 1)
+        Y_true = val_generator.classes
+        plot_confusion_matrix(Y_pred, Y_true)
 
     # Plot statistics
-    plot(model_statistics.history)
+    if plot_statistics:
+        plot_loss_accuracy(model_statistics.history)
+
+    # Print statistics (train & val)
+    print(model_statistics.history)
 
 # TODO:
 # - Weight the data / should all data be augmented?
 # - What optimizer function?
-
