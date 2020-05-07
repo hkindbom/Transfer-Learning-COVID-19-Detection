@@ -1,3 +1,5 @@
+from keras.preprocessing.image import ImageDataGenerator
+
 # folders
 train_dir = "data/dataset/train/"
 save_dir = "/transforms/"
@@ -18,6 +20,7 @@ datagen = ImageDataGenerator(
             cval=0.,
             rescale=1./255
                 )
+
 train_generator = datagen.flow_from_directory(
     train_dir,
     batch_size=batch_size,
