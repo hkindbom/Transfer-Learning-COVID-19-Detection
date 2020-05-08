@@ -17,7 +17,6 @@ test_dir = './../data/dataset/smallDataset/test/'
 # Settings
 train_local = True
 train_real = False
-
 show_confusion_matrix = True
 plot_statistics = True
 
@@ -25,16 +24,16 @@ plot_statistics = True
 if train_real:
     IMG_SIZE = 224  # double check in report
     LEARNING_RATE = 2e-5
-    EPOCHS = 22  # in report 22
+    EPOCHS = 22
     BATCH_SIZE = 8
     FACTOR = 0.7
     PATIENCE = 5
     OPTIMIZER = 'Adam'
 
 if train_local:
-    IMG_SIZE = 224  # double check in report
+    IMG_SIZE = 224
     LEARNING_RATE = 2e-5
-    EPOCHS = 10  # in report 22
+    EPOCHS = 3
     BATCH_SIZE = 8
     FACTOR = 0.7
     PATIENCE = 5
@@ -42,7 +41,7 @@ if train_local:
 
 
 def create_generators():
-    datagen = ImageDataGenerator(
+    datagen_augmented = ImageDataGenerator(
         featurewise_center=False,
         featurewise_std_normalization=False,
         rotation_range=10,
@@ -52,10 +51,18 @@ def create_generators():
         brightness_range=(0.9, 1.1),
         fill_mode='constant',
         cval=0.,
-        rescale=1. / 255
+        rescale=1./255
     )
 
-    train_generator = datagen.flow_from_directory(
+    datagen = ImageDataGenerator(
+        featurewise_center=False,
+        featurewise_std_normalization=False,
+        fill_mode='constant',
+        cval=0.,
+        rescale=1./255
+    )
+
+    train_generator = datagen_augmented.flow_from_directory(
         train_dir,
         batch_size=BATCH_SIZE,
         target_size=(IMG_SIZE, IMG_SIZE),
