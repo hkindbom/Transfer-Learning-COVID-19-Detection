@@ -2,6 +2,7 @@
 .idea/
 data/covid-chestxray-dataset
 data/Figure1-COVID-chestxray-dataset
+data/small_dataset
 data/dataset/train
 data/dataset/test
 data/dataset/val
