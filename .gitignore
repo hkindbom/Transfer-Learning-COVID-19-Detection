@@ -1,9 +1,8 @@
 .ipynb_checkpoints
 .idea/
-data/covid-chestxray-dataset
-data/Figure1-COVID-chestxray-dataset
-data/small_dataset
-data/dataset/train
-data/dataset/test
-data/dataset/val
+data/*
+./idea/misc.xml
+/Mikael-playground/*
+!/Mikael-playground/transfer_model.py
+data/dataset/johanna_testdata/*
 __pycache__/
