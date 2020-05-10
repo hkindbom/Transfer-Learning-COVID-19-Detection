@@ -1,0 +1,11 @@
+Commands for google cloud:
+
+Fixing permission error:
+https://onepagezen.com/fix-ftp-permission-errors-google-cloud/
+
+Add files from local machine:
+gcloud compute scp --project dd2424-deep-learning-276608 --zone asia-southeast1-b --recurse <local file or directory> deep-learning-project-vm:~/
+e.g. <local file or directory> = /home/hannes/Desktop/small_dataset
+
+Access files in VM.
+cd /home/
