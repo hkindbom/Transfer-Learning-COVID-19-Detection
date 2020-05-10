@@ -5,4 +5,5 @@ data/*
 /Mikael-playground/*
 !/Mikael-playground/transfer_model.py
 data/dataset/johanna_testdata/*
+.DS_Store
 __pycache__/
