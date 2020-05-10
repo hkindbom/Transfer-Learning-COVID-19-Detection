@@ -8,17 +8,26 @@ from sklearn.metrics import confusion_matrix
 import numpy as np
 import seaborn as sn
 import pandas as pd
+import random
 
-# folders
-train_dir = './../data/dataset/smallDataset/train/'
-val_dir = './../data/dataset/smallDataset/val/'
-test_dir = './../data/dataset/smallDataset/test/'
+# folders and paths
+train_dir = './../data/dataset/smallDataset/train1/'
+val_dir = './../data/dataset/smallDataset/val1/'
+test_dir = './../data/dataset/smallDataset/test1/'
+saved_model_path = "./transfer_model_weights.h5"
+saved_accuracy_plot_path = "./accuracy_plot.png"
+saved_loss_plot_path = "./loss_plot.png"
+saved_confusion_matrix_path = "./confusion_matrix.png"
 
 # Settings
-train_local = True
-train_real = False
+train_real = True
 show_confusion_matrix = True
 plot_statistics = True
+
+# Experiments
+run_experiment1 = True
+run_experiment2 = False
+run_experiment3 = False
 
 # Constants
 if train_real:
@@ -30,7 +39,7 @@ if train_real:
     PATIENCE = 5
     OPTIMIZER = 'Adam'
 
-if train_local:
+else:
     IMG_SIZE = 224
     LEARNING_RATE = 2e-5
     EPOCHS = 3
@@ -133,7 +142,7 @@ def train_model(model, train_generator, val_generator):
         epochs=EPOCHS,
         validation_data=val_generator,
         validation_steps=nb_val_samples // BATCH_SIZE,
-        verbose=0,
+        verbose=1,
         class_weight=class_weights,
         callbacks=[ReduceLROnPlateau(
             monitor='loss',
@@ -146,22 +155,24 @@ def train_model(model, train_generator, val_generator):
 
 
 def plot_loss_accuracy(statistics):
-    # summarize history for accuracy
-    plt.plot(statistics['accuracy'])
-    plt.plot(statistics['val_accuracy'])
+    range_EPOCHS = np.array(range(1, EPOCHS+1))
+
+    plt.plot(range_EPOCHS, statistics['accuracy'])
+    plt.plot(range_EPOCHS, statistics['val_accuracy'])
     plt.title('model accuracy')
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
     plt.legend(['train', 'Val'], loc='upper left')
+    plt.savefig(saved_accuracy_plot_path)
     plt.show()
 
-    # summarize history for loss
-    plt.plot(statistics['loss'])
-    plt.plot(statistics['val_loss'])
+    plt.plot(range_EPOCHS, statistics['loss'])
+    plt.plot(range_EPOCHS, statistics['val_loss'])
     plt.title('model loss')
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train', 'Val'], loc='upper left')
+    plt.savefig(saved_loss_plot_path)
     plt.show()
 
 
@@ -170,12 +181,16 @@ def plot_confusion_matrix(Y_pred, Y_true):
     df_cm = pd.DataFrame(conf_matrix, columns=np.unique(Y_true), index=np.unique(Y_true))
     df_cm.index.name = 'Actual'
     df_cm.columns.name = 'Predicted'
-    plt.figure(figsize=(3, 3))
     sn.heatmap(df_cm, cmap="Blues", annot=True, annot_kws={"size": 16})
+    plt.savefig(saved_confusion_matrix_path)
     plt.show()
 
 
+
 if __name__ == "__main__":
+    # Seed
+    random.seed(10)
+
     # Get generators
     train_generator, val_generator, test_generator = create_generators()
 
@@ -187,19 +202,27 @@ if __name__ == "__main__":
     model_statistics = train_model(model, train_generator, val_generator)
     print("Model trained")
 
+    # Save model architecture + weights
+    model.save(saved_model_path)
+    print("Model saved to file")
+
     # Get predicted values and plot confusion matrix
     if show_confusion_matrix:
         Y_pred = model.predict_generator(val_generator)
         Y_pred = np.argmax(Y_pred, 1)
         Y_true = val_generator.classes
         plot_confusion_matrix(Y_pred, Y_true)
+        print("Confusion matrix saved to file")
 
     # Plot statistics
     if plot_statistics:
         plot_loss_accuracy(model_statistics.history)
+        print("Loss & accuracy plots saved to file")
+
 
     # Print statistics (train & val)
     print(model_statistics.history)
+
 
 # TODO:
 # - Weight the data / should all data be augmented?
