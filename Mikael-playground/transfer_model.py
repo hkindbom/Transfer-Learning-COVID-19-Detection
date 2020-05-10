@@ -21,6 +21,7 @@ saved_confusion_matrix_path = "./confusion_matrix_"
 
 # Settings
 train_real = False
+save_model = False
 show_confusion_matrix = True
 plot_statistics = True
 
@@ -206,8 +207,9 @@ def experiment1(train_generator, val_generator, test_generator):
     print("Model for " + model_name + " trained")
 
     # Save model
-    model.save(saved_model_path + model_name + ".h5")
-    print("Model for " + model_name + " saved to file")
+    if save_model:
+        model.save(saved_model_path + model_name + ".h5")
+        print("Model for " + model_name + " saved to file")
 
     # Plot confusion matrix
     if show_confusion_matrix:
@@ -236,8 +238,9 @@ def experiment2(train_generator, val_generator, test_generator):
     print("Model for " + model_name + " trained")
 
     # Save model
-    model.save(saved_model_path + model_name + ".h5")
-    print("Model for " + model_name + " saved to file")
+    if save_model:
+        model.save(saved_model_path + model_name + ".h5")
+        print("Model for " + model_name + " saved to file")
 
     # Plot confusion matrix
     if show_confusion_matrix:
