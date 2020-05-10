@@ -14,19 +14,19 @@ import random
 train_dir = './../data/dataset/smallDataset/train1/'
 val_dir = './../data/dataset/smallDataset/val1/'
 test_dir = './../data/dataset/smallDataset/test1/'
-saved_model_path = "./transfer_model_weights.h5"
-saved_accuracy_plot_path = "./accuracy_plot.png"
-saved_loss_plot_path = "./loss_plot.png"
-saved_confusion_matrix_path = "./confusion_matrix.png"
+saved_model_path = "./transfer_model_"
+saved_accuracy_plot_path = "./accuracy_plot_"
+saved_loss_plot_path = "./loss_plot_"
+saved_confusion_matrix_path = "./confusion_matrix_"
 
 # Settings
-train_real = True
+train_real = False
 show_confusion_matrix = True
 plot_statistics = True
 
 # Experiments
 run_experiment1 = True
-run_experiment2 = False
+run_experiment2 = True
 run_experiment3 = False
 
 # Constants
@@ -42,7 +42,7 @@ if train_real:
 else:
     IMG_SIZE = 224
     LEARNING_RATE = 2e-5
-    EPOCHS = 3
+    EPOCHS = 2
     BATCH_SIZE = 8
     FACTOR = 0.7
     PATIENCE = 5
@@ -154,7 +154,7 @@ def train_model(model, train_generator, val_generator):
     return trained_model
 
 
-def plot_loss_accuracy(statistics):
+def plot_loss_accuracy(statistics, model_name):
     range_EPOCHS = np.array(range(1, EPOCHS+1))
 
     plt.plot(range_EPOCHS, statistics['accuracy'])
@@ -163,7 +163,7 @@ def plot_loss_accuracy(statistics):
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
     plt.legend(['train', 'Val'], loc='upper left')
-    plt.savefig(saved_accuracy_plot_path)
+    plt.savefig(saved_accuracy_plot_path + model_name + ".png")
     plt.show()
 
     plt.plot(range_EPOCHS, statistics['loss'])
@@ -172,20 +172,90 @@ def plot_loss_accuracy(statistics):
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train', 'Val'], loc='upper left')
-    plt.savefig(saved_loss_plot_path)
+    plt.savefig(saved_loss_plot_path + model_name + ".png")
     plt.show()
 
 
-def plot_confusion_matrix(Y_pred, Y_true):
+def plot_confusion_matrix(model, model_name):
+    Y_pred = model.predict_generator(val_generator)
+    Y_pred = np.argmax(Y_pred, 1)
+    Y_true = val_generator.classes
+
     conf_matrix = confusion_matrix(Y_true, Y_pred)
     df_cm = pd.DataFrame(conf_matrix, columns=np.unique(Y_true), index=np.unique(Y_true))
     df_cm.index.name = 'Actual'
     df_cm.columns.name = 'Predicted'
     sn.heatmap(df_cm, cmap="Blues", annot=True, annot_kws={"size": 16})
-    plt.savefig(saved_confusion_matrix_path)
+    plt.savefig(saved_confusion_matrix_path + model_name + ".png")
     plt.show()
 
+def experiment1(train_generator, val_generator, test_generator):
+    # In this experiment all layers in the VGG16-model will be initialized with weights from Imagenet
+    # and thereafter frozen. The last four fully connected layers in our architecture will be trained.
 
+    # Initialise parameters
+    unfrozen_layers = 4
+    model_name = "experiment1"
+
+    # Build model
+    model = build_model(unfrozen_layers)
+    print("Model for " + model_name + " built")
+
+    # Train model
+    model_statistics = train_model(model, train_generator, val_generator)
+    print("Model for " + model_name + " trained")
+
+    # Save model
+    model.save(saved_model_path + model_name + ".h5")
+    print("Model for " + model_name + " saved to file")
+
+    # Plot confusion matrix
+    if show_confusion_matrix:
+        plot_confusion_matrix(model, model_name)
+        print("Confusion matrix " + model_name + " saved to file")
+
+    # Plot statistics
+    if plot_statistics:
+        plot_loss_accuracy(model_statistics.history, model_name)
+        print("Loss & accuracy plots " + model_name + " saved to file")
+
+def experiment2(train_generator, val_generator, test_generator):
+    #  In this experiment all layers in the VGG16-model will be initialized with weights from Imagenet.
+    #  All layers will be retrained.
+
+    # Initialise parameters
+    unfrozen_layers = 22
+    model_name = "experiment_2"
+
+    # Build model
+    model = build_model(unfrozen_layers)
+    print("Model for " + model_name + " built")
+
+    # Train model
+    model_statistics = train_model(model, train_generator, val_generator)
+    print("Model for " + model_name + " trained")
+
+    # Save model
+    model.save(saved_model_path + model_name + ".h5")
+    print("Model for " + model_name + " saved to file")
+
+    # Plot confusion matrix
+    if show_confusion_matrix:
+        plot_confusion_matrix(model, model_name)
+        print("Confusion matrix " + model_name + " saved to file")
+
+    # Plot statistics
+    if plot_statistics:
+        plot_loss_accuracy(model_statistics.history, model_name)
+        print("Loss & accuracy plots " + model_name + " saved to file")
+
+def experiment3(train_generator, val_generator, test_generator):
+    # In this experiment the model will have the same architecture as in the previous experiments,
+    # but the weights wont be initialized. All layers will be trained from zero.
+
+    model_name = "experiment3"
+
+    pass
 
 if __name__ == "__main__":
     # Seed
@@ -194,36 +264,12 @@ if __name__ == "__main__":
     # Get generators
     train_generator, val_generator, test_generator = create_generators()
 
-    # Build model
-    model = build_model(unfrozen_layers=4)
-    model.summary()
+    # Run experiments
+    if experiment1:
+        experiment1(train_generator, val_generator, test_generator)
+    if experiment2:
+        experiment2(train_generator, val_generator, test_generator)
+    if experiment3:
+        experiment3(train_generator, val_generator, test_generator)
 
-    # Train model and returns statistics
-    model_statistics = train_model(model, train_generator, val_generator)
-    print("Model trained")
-
-    # Save model architecture + weights
-    model.save(saved_model_path)
-    print("Model saved to file")
-
-    # Get predicted values and plot confusion matrix
-    if show_confusion_matrix:
-        Y_pred = model.predict_generator(val_generator)
-        Y_pred = np.argmax(Y_pred, 1)
-        Y_true = val_generator.classes
-        plot_confusion_matrix(Y_pred, Y_true)
-        print("Confusion matrix saved to file")
-
-    # Plot statistics
-    if plot_statistics:
-        plot_loss_accuracy(model_statistics.history)
-        print("Loss & accuracy plots saved to file")
-
-
-    # Print statistics (train & val)
-    print(model_statistics.history)
-
-
-# TODO:
-# - Weight the data / should all data be augmented?
-# - What optimizer function?
+    print("All experiment finished!")
