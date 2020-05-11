@@ -131,8 +131,9 @@ def train_model(model, train_generator, val_generator):
     nb_train_samples = train_generator.n
     nb_val_samples = val_generator.n
     # The weights can be altered to pay more attention to recall/precision/accuracy. Balanced will yield better recall.
+    weights = {0: 1, 1: 1, 2: 12}
     class_weights = class_weight.compute_class_weight(
-        'balanced',
+        weights,
         np.unique(train_generator.classes),
         train_generator.classes
     )
