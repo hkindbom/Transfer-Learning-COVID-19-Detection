@@ -11,9 +11,9 @@ import pandas as pd
 import random
 
 # folders and paths
-train_dir = './../data/dataset/smallDataset/train1/'
-val_dir = './../data/dataset/smallDataset/val1/'
-test_dir = './../data/dataset/smallDataset/test1/'
+train_dir = './../data/dataset/smallDataset/train/'
+val_dir = './../data/dataset/smallDataset/val/'
+test_dir = './../data/dataset/smallDataset/test/'
 saved_model_path = "./transfer_model_"
 saved_accuracy_plot_path = "./accuracy_plot_"
 saved_loss_plot_path = "./loss_plot_"
@@ -26,8 +26,8 @@ show_confusion_matrix = True
 plot_statistics = True
 
 # Experiments
-run_experiment1 = True
-run_experiment2 = True
+run_experiment1 = False
+run_experiment2 = False
 run_experiment3 = False
 
 # Constants
@@ -98,9 +98,9 @@ def create_generators():
     return train_generator, val_generator, test_generator
 
 
-def build_model(unfrozen_layers):
+def build_model(unfrozen_layers, weights):
     # Create VGG-model
-    vgg_model = VGG16(weights='imagenet', include_top=False, input_shape=(IMG_SIZE, IMG_SIZE, 3))
+    vgg_model = VGG16(weights=weights, include_top=False, input_shape=(IMG_SIZE, IMG_SIZE, 3))
 
     # Create our tensors
     last_tensor_vgg = vgg_model.output
@@ -200,7 +200,7 @@ def experiment1(train_generator, val_generator, test_generator):
     model_name = "experiment1"
 
     # Build model
-    model = build_model(unfrozen_layers)
+    model = build_model(unfrozen_layers, weights="imagenet")
     print("Model for " + model_name + " built")
 
     # Train model
@@ -231,7 +231,7 @@ def experiment2(train_generator, val_generator, test_generator):
     model_name = "experiment_2"
 
     # Build model
-    model = build_model(unfrozen_layers)
+    model = build_model(unfrozen_layers, weights="imagenet")
     print("Model for " + model_name + " built")
 
     # Train model
@@ -259,6 +259,33 @@ def experiment3(train_generator, val_generator, test_generator):
 
     model_name = "experiment3"
 
+    # Initialise parameters
+    unfrozen_layers = 22
+    model_name = "experiment_3"
+
+    # Build model
+    model = build_model(unfrozen_layers, weights=None)
+    print("Model for " + model_name + " built")
+
+    # Train model
+    model_statistics = train_model(model, train_generator, val_generator)
+    print("Model for " + model_name + " trained")
+
+    # Save model
+    if save_model:
+        model.save(saved_model_path + model_name + ".h5")
+        print("Model for " + model_name + " saved to file")
+
+    # Plot confusion matrix
+    if show_confusion_matrix:
+        plot_confusion_matrix(model, model_name)
+        print("Confusion matrix " + model_name + " saved to file")
+
+    # Plot statistics
+    if plot_statistics:
+        plot_loss_accuracy(model_statistics.history, model_name)
+        print("Loss & accuracy plots " + model_name + " saved to file")
+
     pass
 
 if __name__ == "__main__":
@@ -269,11 +296,11 @@ if __name__ == "__main__":
     train_generator, val_generator, test_generator = create_generators()
 
     # Run experiments
-    if experiment1:
+    if run_experiment1:
         experiment1(train_generator, val_generator, test_generator)
-    if experiment2:
+    if run_experiment2:
         experiment2(train_generator, val_generator, test_generator)
-    if experiment3:
+    if run_experiment3:
         experiment3(train_generator, val_generator, test_generator)
 
     print("All experiment finished!")
