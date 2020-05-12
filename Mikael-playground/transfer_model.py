@@ -2,6 +2,7 @@ from keras.applications.vgg16 import VGG16
 from keras.preprocessing.image import ImageDataGenerator
 from sklearn.utils import class_weight
 from keras import Model, layers
+from keras.model import load_model
 from keras.callbacks import ReduceLROnPlateau
 from matplotlib import pyplot as plt
 from sklearn.metrics import confusion_matrix
@@ -283,6 +284,10 @@ def experiment3(train_generator, val_generator, test_generator):
     if plot_statistics:
         plot_loss_accuracy(model_statistics.history, model_name)
         print("Loss & accuracy plots " + model_name + " saved to file")
+
+def test_model(modelname, test_generator):
+    model = keras.models.load_model(model_path)
+    model
 
 if __name__ == "__main__":
     # Seed
