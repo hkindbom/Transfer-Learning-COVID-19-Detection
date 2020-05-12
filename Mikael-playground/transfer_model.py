@@ -257,8 +257,6 @@ def experiment3(train_generator, val_generator, test_generator):
     # In this experiment the model will have the same architecture as in the previous experiments,
     # but the weights wont be initialized. All layers will be trained from zero.
 
-    model_name = "experiment3"
-
     # Initialise parameters
     unfrozen_layers = 22
     model_name = "experiment_3"
@@ -285,8 +283,6 @@ def experiment3(train_generator, val_generator, test_generator):
     if plot_statistics:
         plot_loss_accuracy(model_statistics.history, model_name)
         print("Loss & accuracy plots " + model_name + " saved to file")
-
-    pass
 
 if __name__ == "__main__":
     # Seed
