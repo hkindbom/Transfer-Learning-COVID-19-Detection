@@ -11,32 +11,42 @@ import seaborn as sn
 import pandas as pd
 import random
 
-# folders and paths
-train_dir = 'data/dataset/smallDataset/train/'
-val_dir = 'data/dataset/smallDataset/val/'
-test_dir = 'data/dataset/smallDataset/test/' # should always be test of large data set
-saved_model_path = "./transfer_model_"
-saved_accuracy_plot_path = "./accuracy_plot_"
-saved_loss_plot_path = "./loss_plot_"
-saved_confusion_matrix_path = "./confusion_matrix_"
-
 # Settings
+small_dataset = True
+large_dataset = False
 train_real = False
 save_model = False
+test_model = True
 show_confusion_matrix = True
 plot_statistics = True
 
 # Experiments
 run_experiment1 = True
-run_experiment2 = True
+run_experiment2 = False
 run_experiment3 = False
 
-# List of models (1, 2, 3) to test
-model_nbrs = [1, 2]
+# datasets, folders and paths
+test_dir = 'data/dataset/largeDataset/test/' # should always be test of large data set, ignore small test data 
+saved_model_path = "./transfer_model_"
+saved_accuracy_plot_path = "./accuracy_plot_"
+saved_loss_plot_path = "./loss_plot_"
+saved_confusion_matrix_path = "./confusion_matrix_"
+
+if small_dataset:
+    dataset = 'small'
+    train_dir = './data/dataset/smallDataset/train/'
+    val_dir = './data/dataset/smallDataset/val/'
+    weights = 'balanced'
+
+if large_dataset:
+    dataset = 'large'
+    train_dir = './data/dataset/largeDataset/train/'
+    val_dir = './data/dataset/largeDataset/val/'
+    weights ={0: 1, 1: 1, 2: 12}
 
 # Constants
 if train_real:
-    IMG_SIZE = 224  # double check in report
+    IMG_SIZE = 224 
     LEARNING_RATE = 2e-5
     EPOCHS = 22
     BATCH_SIZE = 8
@@ -47,7 +57,7 @@ if train_real:
 else:
     IMG_SIZE = 224
     LEARNING_RATE = 2e-5
-    EPOCHS = 1
+    EPOCHS = 3
     BATCH_SIZE = 8
     FACTOR = 0.7
     PATIENCE = 5
@@ -134,13 +144,12 @@ def freeze_layers(model, unfrozen_layers):
 def train_model(model, train_generator, val_generator):
     nb_train_samples = train_generator.n
     nb_val_samples = val_generator.n
-    # The weights can be altered to pay more attention to recall/precision/accuracy. Balanced will yield better recall.
-    weights = {0: 1, 1: 1, 2: 12}
+
     class_weights = class_weight.compute_class_weight(
-        weights,
-        np.unique(train_generator.classes),
-        train_generator.classes
-    )
+    weights,
+    np.unique(train_generator.classes),
+    train_generator.classes
+    ) 
 
     trained_model = model.fit_generator(
         train_generator,
@@ -195,18 +204,10 @@ def plot_confusion_matrix(model, model_name, generator):
     plt.savefig(saved_confusion_matrix_path + model_name + ".png")
     plt.show()
 
-def test_model(model_nbr, test_generator):
-    # Load the model of choice (specified as number) and plots the confusion matrix based on test data
-    # Also computes the accuracy of the loaded model
-
-    nb_test_samples = test_generator.n
-    model = load_model(saved_model_path + "experiment" + str(model_nbr) + ".h5")
-    modelname = "experiment" + str(model_nbr) + "_test"
-    
-    accuracy = model.evaluate_generator(test_generator)[0]
-    print("Accuracy of model " + str(model_nbr) + " on test data is: ", accuracy, "(" + str(nb_test_samples) + " pictures)")
-
-    plot_confusion_matrix(model, modelname, test_generator)
+def test_model(model, model_name, test_generator):
+    results = model.evaluate_generator(test_generator)
+    print(str(model.metrics_names[1]) + " of " + str(model_name) + " on test data: ", results[1])
+    plot_confusion_matrix(model, model_name, test_generator)
 
 def experiment1(train_generator, val_generator, test_generator):
     # In this experiment all layers in the VGG16-model will be initialized with weights from Imagenet
@@ -214,14 +215,14 @@ def experiment1(train_generator, val_generator, test_generator):
 
     # Initialise parameters
     unfrozen_layers = 4
-    model_name = "experiment1"
+    model_name = "experiment_1" + "_" + dataset
 
     # Build model
     model = build_model(unfrozen_layers, weights="imagenet")
     print("Model for " + model_name + " built")
 
     # Train model
-    model_statistics = train_model(model, train_generator, val_generator)
+    trained_model, model_statistics = train_model(model, train_generator, val_generator)
     print("Model for " + model_name + " trained")
 
     # Save model
@@ -238,6 +239,10 @@ def experiment1(train_generator, val_generator, test_generator):
     if plot_statistics:
         plot_loss_accuracy(model_statistics.history, model_name)
         print("Loss & accuracy plots " + model_name + " saved to file")
+    
+    # Test model including plotting confusion matrix
+    if test_model:
+        test_model(model, model_name, test_generator)
 
 def experiment2(train_generator, val_generator, test_generator):
     #  In this experiment all layers in the VGG16-model will be initialized with weights from Imagenet.
@@ -245,7 +250,7 @@ def experiment2(train_generator, val_generator, test_generator):
 
     # Initialise parameters
     unfrozen_layers = 22
-    model_name = "experiment_2"
+    model_name = "experiment_2" + "_" + dataset
 
     # Build model
     model = build_model(unfrozen_layers, weights="imagenet")
@@ -269,6 +274,10 @@ def experiment2(train_generator, val_generator, test_generator):
     if plot_statistics:
         plot_loss_accuracy(model_statistics.history, model_name)
         print("Loss & accuracy plots " + model_name + " saved to file")
+    
+    # Test model including plotting confusion matrix
+    if test_model:
+        test_model(model, model_name, test_generator)
 
 def experiment3(train_generator, val_generator, test_generator):
     # In this experiment the model will have the same architecture as in the previous experiments,
@@ -276,7 +285,7 @@ def experiment3(train_generator, val_generator, test_generator):
 
     # Initialise parameters
     unfrozen_layers = 22
-    model_name = "experiment_3"
+    model_name = "experiment_3" + "_" + dataset
 
     # Build model
     model = build_model(unfrozen_layers, weights=None)
@@ -301,6 +310,10 @@ def experiment3(train_generator, val_generator, test_generator):
         plot_loss_accuracy(model_statistics.history, model_name)
         print("Loss & accuracy plots " + model_name + " saved to file")
 
+    # Test model including plotting confusion matrix
+    if test_model:
+        test_model(model, model_name, test_generator)
+
 if __name__ == "__main__":
     # Seed
     random.seed(10)
@@ -317,8 +330,3 @@ if __name__ == "__main__":
         experiment3(train_generator, val_generator, test_generator)
 
     print("All experiment finished!")
-    
-    # Test model's performance on test data
-    for model_nbr in model_nbrs:
-        test_model(model_nbr, test_generator)
-        print("Model " + str(model_nbr) + " has been evaluated.")
