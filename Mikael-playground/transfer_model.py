@@ -57,7 +57,7 @@ if train_real:
 else:
     IMG_SIZE = 224
     LEARNING_RATE = 2e-5
-    EPOCHS = 3
+    EPOCHS = 1
     BATCH_SIZE = 8
     FACTOR = 0.7
     PATIENCE = 5
@@ -207,7 +207,7 @@ def plot_confusion_matrix(model, model_name, generator):
 def test_model(model, model_name, test_generator):
     results = model.evaluate_generator(test_generator)
     print(str(model.metrics_names[1]) + " of " + str(model_name) + " on test data: ", results[1])
-    plot_confusion_matrix(model, model_name, test_generator)
+    plot_confusion_matrix(model, model_name+"_test", test_generator)
 
 def experiment1(train_generator, val_generator, test_generator):
     # In this experiment all layers in the VGG16-model will be initialized with weights from Imagenet
