@@ -42,7 +42,7 @@ if large_dataset:
     dataset = 'large'
     train_dir = './data/dataset/largeDataset/train/'
     val_dir = './data/dataset/largeDataset/val/'
-    weights ={0: 1, 1: 1, 2: 12}
+    weights = {0: 1, 1: 1, 2: 12}
 
 # Constants
 if train_real:
@@ -222,7 +222,7 @@ def experiment1(train_generator, val_generator, test_generator):
     print("Model for " + model_name + " built")
 
     # Train model
-    trained_model, model_statistics = train_model(model, train_generator, val_generator)
+    model_statistics = train_model(model, train_generator, val_generator)
     print("Model for " + model_name + " trained")
 
     # Save model
