@@ -2,7 +2,7 @@ from keras.applications.vgg16 import VGG16
 from keras.preprocessing.image import ImageDataGenerator
 from sklearn.utils import class_weight
 from keras import Model, layers
-from keras.model import load_model
+from keras.models import load_model
 from keras.callbacks import ReduceLROnPlateau
 from matplotlib import pyplot as plt
 from sklearn.metrics import confusion_matrix
@@ -12,9 +12,9 @@ import pandas as pd
 import random
 
 # folders and paths
-train_dir = './../data/dataset/smallDataset/train/'
-val_dir = './../data/dataset/smallDataset/val/'
-test_dir = './../data/dataset/smallDataset/test/'
+train_dir = 'data/dataset/smallDataset/train/'
+val_dir = 'data/dataset/smallDataset/val/'
+test_dir = 'data/dataset/smallDataset/test/' # should always be test of large data set
 saved_model_path = "./transfer_model_"
 saved_accuracy_plot_path = "./accuracy_plot_"
 saved_loss_plot_path = "./loss_plot_"
@@ -27,9 +27,12 @@ show_confusion_matrix = True
 plot_statistics = True
 
 # Experiments
-run_experiment1 = False
-run_experiment2 = False
+run_experiment1 = True
+run_experiment2 = True
 run_experiment3 = False
+
+# List of models (1, 2, 3) to test
+model_nbrs = [1, 2]
 
 # Constants
 if train_real:
@@ -44,7 +47,7 @@ if train_real:
 else:
     IMG_SIZE = 224
     LEARNING_RATE = 2e-5
-    EPOCHS = 2
+    EPOCHS = 1
     BATCH_SIZE = 8
     FACTOR = 0.7
     PATIENCE = 5
@@ -179,10 +182,10 @@ def plot_loss_accuracy(statistics, model_name):
     plt.show()
 
 
-def plot_confusion_matrix(model, model_name):
-    Y_pred = model.predict_generator(val_generator)
+def plot_confusion_matrix(model, model_name, generator):
+    Y_pred = model.predict_generator(generator)
     Y_pred = np.argmax(Y_pred, 1)
-    Y_true = val_generator.classes
+    Y_true = generator.classes
 
     conf_matrix = confusion_matrix(Y_true, Y_pred)
     df_cm = pd.DataFrame(conf_matrix, columns=np.unique(Y_true), index=np.unique(Y_true))
@@ -191,6 +194,19 @@ def plot_confusion_matrix(model, model_name):
     sn.heatmap(df_cm, cmap="Blues", annot=True, annot_kws={"size": 16})
     plt.savefig(saved_confusion_matrix_path + model_name + ".png")
     plt.show()
+
+def test_model(model_nbr, test_generator):
+    # Load the model of choice (specified as number) and plots the confusion matrix based on test data
+    # Also computes the accuracy of the loaded model
+
+    nb_test_samples = test_generator.n
+    model = load_model(saved_model_path + "experiment" + str(model_nbr) + ".h5")
+    modelname = "experiment" + str(model_nbr) + "_test"
+    
+    accuracy = model.evaluate_generator(test_generator)[0]
+    print("Accuracy of model " + str(model_nbr) + " on test data is: ", accuracy, "(" + str(nb_test_samples) + " pictures)")
+
+    plot_confusion_matrix(model, modelname, test_generator)
 
 def experiment1(train_generator, val_generator, test_generator):
     # In this experiment all layers in the VGG16-model will be initialized with weights from Imagenet
@@ -215,7 +231,7 @@ def experiment1(train_generator, val_generator, test_generator):
 
     # Plot confusion matrix
     if show_confusion_matrix:
-        plot_confusion_matrix(model, model_name)
+        plot_confusion_matrix(model, model_name, val_generator)
         print("Confusion matrix " + model_name + " saved to file")
 
     # Plot statistics
@@ -246,7 +262,7 @@ def experiment2(train_generator, val_generator, test_generator):
 
     # Plot confusion matrix
     if show_confusion_matrix:
-        plot_confusion_matrix(model, model_name)
+        plot_confusion_matrix(model, model_name, val_generator)
         print("Confusion matrix " + model_name + " saved to file")
 
     # Plot statistics
@@ -277,17 +293,13 @@ def experiment3(train_generator, val_generator, test_generator):
 
     # Plot confusion matrix
     if show_confusion_matrix:
-        plot_confusion_matrix(model, model_name)
+        plot_confusion_matrix(model, model_name, val_generator)
         print("Confusion matrix " + model_name + " saved to file")
 
     # Plot statistics
     if plot_statistics:
         plot_loss_accuracy(model_statistics.history, model_name)
         print("Loss & accuracy plots " + model_name + " saved to file")
-
-def test_model(modelname, test_generator):
-    model = keras.models.load_model(model_path)
-    model
 
 if __name__ == "__main__":
     # Seed
@@ -305,3 +317,8 @@ if __name__ == "__main__":
         experiment3(train_generator, val_generator, test_generator)
 
     print("All experiment finished!")
+    
+    # Test model's performance on test data
+    for model_nbr in model_nbrs:
+        test_model(model_nbr, test_generator)
+        print("Model " + str(model_nbr) + " has been evaluated.")
