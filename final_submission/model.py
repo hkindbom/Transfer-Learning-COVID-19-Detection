@@ -32,7 +32,7 @@ import pandas as pd
 import random
 import sys
 
-# Initiating experiment booleans
+# Initializing experiment booleans
 run_experiment1, run_experiment2, run_experiment3, run_experiment4 = False, False, False, False
 
 # Changing chosen experiment boolean to True
