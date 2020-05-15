@@ -1,36 +1,60 @@
+""" 
+DD2424 Deep Learning in Data Science
+May 2020
+Group Project: Detecting COVID-19 in X-Rays using Transfer Learning
+Author: Mikael Ljung, Hannes Kindbom, Ershard Taherifard, Johanna Dyremark 
+
+Experiment 1: Trains on dataset COVIDxPLUS. All layers in the VGG16-model will be initialized with weights from Imagenet
+and thereafter frozen. The last four fully connected layers in our architecture will be trained.
+
+Experiment 2: Trains on dataset COVIDxPLUS. All layers in the VGG16-model will be initialized with weights from Imagenet.
+All layers will be retrained.
+
+Experiment 3: Trains on dataset COVIDxMINI. All layers in the VGG16-model will be initialized with weights from Imagenet
+and thereafter frozen. The last four fully connected layers in our architecture will be trained.
+
+Experiment 4: Trains on dataset COVIDxMINI. All layers in the VGG16-model will be initialized with weights from Imagenet.
+All layers will be retrained.
+
+"""
+
+# Modules
+from keras import Model, layers
 from keras.applications.vgg16 import VGG16
 from keras.preprocessing.image import ImageDataGenerator
-from sklearn.utils import class_weight
-from keras import Model, layers
-from keras.models import load_model
 from keras.callbacks import ReduceLROnPlateau
-from matplotlib import pyplot as plt
+from sklearn.utils import class_weight
 from sklearn.metrics import confusion_matrix
+from matplotlib import pyplot as plt
 import numpy as np
 import seaborn as sn
 import pandas as pd
 import random
 
-# Settings
-small_dataset = True
-large_dataset = False
-train_real = False
-save_model = False
-test_model = True
-show_confusion_matrix = True
-plot_statistics = True
-
-# Experiments
-run_experiment1 = True
+# Experiments: choose one
+run_experiment1 = False
 run_experiment2 = False
-run_experiment3 = False
+run_experiment3 = True
+run_experiment4 = False
 
-# datasets, folders and paths
-test_dir = 'data/dataset/largeDataset/test/' # should always be test of large data set, ignore small test data 
-saved_model_path = "./transfer_model_"
+# Datasets, folders and paths
+test_dir = 'data/dataset/largeDataset/test/'
 saved_accuracy_plot_path = "./accuracy_plot_"
 saved_loss_plot_path = "./loss_plot_"
 saved_confusion_matrix_path = "./confusion_matrix_"
+
+# Constants
+IMG_SIZE = 224 
+LEARNING_RATE = 2e-5
+BATCH_SIZE = 8
+FACTOR = 0.7
+PATIENCE = 5
+OPTIMIZER = 'Adam'
+
+# Settings of graphics and testing 
+show_validation_confusion_matrix = True
+plot_statistics = True
+evaluate_on_test_data = True
 
 if small_dataset:
     dataset = 'small'
@@ -45,23 +69,12 @@ if large_dataset:
     weights = {0: 1, 1: 1, 2: 12}
 
 # Constants
-if train_real:
-    IMG_SIZE = 224 
-    LEARNING_RATE = 2e-5
-    EPOCHS = 22
-    BATCH_SIZE = 8
-    FACTOR = 0.7
-    PATIENCE = 5
-    OPTIMIZER = 'Adam'
-
-else:
-    IMG_SIZE = 224
-    LEARNING_RATE = 2e-5
-    EPOCHS = 8
-    BATCH_SIZE = 8
-    FACTOR = 0.7
-    PATIENCE = 5
-    OPTIMIZER = 'Adam'
+IMG_SIZE = 224
+LEARNING_RATE = 2e-5
+BATCH_SIZE = 8
+FACTOR = 0.7
+PATIENCE = 5
+OPTIMIZER = 'Adam'
 
 
 def create_generators():
