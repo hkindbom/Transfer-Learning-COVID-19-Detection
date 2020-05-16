@@ -1,9 +1,0 @@
-EPOCHS = 30
-BATCH_SIZE = 8
-Predicted   0   1   2
-Actual
-0          79  19   2
-1           5  91   4
-2           5  22  44
-highest accuracy: 0.9347826
-highest val_acc: 0.8136882185935974
